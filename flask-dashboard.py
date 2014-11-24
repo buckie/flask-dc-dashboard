@@ -1,17 +1,19 @@
 from flask import Flask, render_template, json
 import pandas as pd
-from dash.dash import Dashboard
+# from dcjs.dcjs import Dashboard
 
 app = Flask(__name__)
 
 
 @app.route('/')
 def hello_world():
-    dash = Dashboard(spendData.to_json(orient='records'))
-    dash.add_chart(html_id="chart-ring-year")
-    dash.add_chart(html_id="chart-hist-spend")
-    dash.add_chart(html_id="chart-row-spenders")
-    return render_template('layout.html', dash=dash)
+    # dcjs = Dashboard(spendData.to_json(orient='records'))
+    # dcjs.add_chart(html_id="chart-ring-year")
+    # dcjs.add_chart(html_id="chart-hist-spend")
+    # dcjs.add_chart(html_id="chart-row-spenders")
+    # return render_template('layout.html', dcjs=dcjs)
+
+    return render_template('layout.html', data=spendData.to_json(orient='records'))
 
 
 spendData = pd.DataFrame([

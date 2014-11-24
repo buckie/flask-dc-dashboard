@@ -7,11 +7,39 @@
 </head>
 <body>
 
-{{ dash.render_divs()|safe }}
+<div id="chart-ring-year-1"></div>
+<div id="chart-ring-year-2"></div>
+{#{{ dcjs.render_divs()|safe }}#}
 
 <script type="text/javascript" src="{{ url_for('static', filename='js/d3.js') }}"></script>
 <script type="text/javascript" src="{{ url_for('static', filename='js/crossfilter.js') }}"></script>
 <script type="text/javascript" src="{{ url_for('static', filename='js/dc.js') }}"></script>
-{{ dash.render_js()|safe }}
+
+<script>
+    // use static or load via d3.csv("spendData.csv", function(error, spendData) {/* do stuff */});
+    var spendData = {{ data|safe }};
+
+
+    // set crossfilter
+    var ndx = crossfilter(spendData),
+            yearDim  = ndx.dimension(function(d) {return d.Year;}),
+            spendDim = ndx.dimension(function(d) {return Math.floor(d.Spent/10);}),
+            nameDim  = ndx.dimension(function(d) {return d.Name;}),
+            spendPerYear = yearDim.group().reduceSum(function(d) {return d.Spent;}),
+            spendPerName = nameDim.group().reduceSum(function(d) {return d.Spent;}),
+            spendHist    = spendDim.group().reduceCount();
+
+    {#{{ declare_charts(charts) }}#}
+    var ring_1 = dc.pieChart("#chart-ring-year-1");
+    ring_1.width(200);
+    ring_1.height(200);
+    ring_1.dimension(yearDim);
+    ring_1.group(spendPerYear);
+    ring_1.innerRadius(50);
+
+    dc.renderAll();
+
+</script>
+{#{{ dcjs.render_js()|safe }}#}
 </body>
 </html>
